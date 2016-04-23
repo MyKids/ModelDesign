@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<title>合理的暴露出方法(2)</title>
+	</head>
+<body>
+<h1>合理的暴露出方法(2)</h1>
+
+<p>接上次的话题</p>
+
+<p>假设我们使用<img src="DraggedImage.png"/> </p>
+
+<p>这样每次我们调用都得到一个新的对象,但是这样做是解决了一部分我们可能会引发冲突的问题。</p>
+
+<p>但是这对于一些后期的维护工作又不太理想。</p>
+
+<p>因为一旦又需要自定义一些通用方法我们就面临着各自为政无法统一的设置了。</p>
+
+<p><em>这时候我们不如类化封装 假设我们需要定义一个检测密码的方法</em></p>
+
+<p>那我们只有去追溯到<strong>最早定义方法处</strong>去新增。</p>
+
+<figure><img src="DraggedImage-1.png"/></figure>
+
+<p>这样的话万一我们的合作开发并不允许我们直接去修改基础的方法对象,我们应该如何处理呢?</p>
+
+<figure><img src="DraggedImage-2.png"/></figure>
+
+<p>这样的话 我们原始方法都定义到原型中然后 我们通过<code>new checkUtils()  </code>实例化得到一个对象来使用,并且这时候如果需要新的方法 则就可以通过<code>Object.prototype[name]=fn</code> 的方式来直接给构造对象添加一个新的原型方法。</p>
+
+<h3>那么 如果有些时候我想在原生对象中做一些增强功能呢?</h3>
+
+<p><strong> 比如我需要在String中内置一个字符串16进制转换的功能</strong></p>
+
+<figure><img src="DraggedImage-3.png"/></figure>
+
+<p>通常我们可能就这样的直接简单粗暴的添加到了原始对象中去了。</p>
+
+<p>如果单文件单模块也无妨。主要一旦团队开发。这样的设定对于其他人来说又是一个困扰,污染了其它同学的原始函数导致一些开销是非必需的。</p>
+
+<p><strong>这时候我们应该统一一个接口进行定义</strong></p>
+
+<p>例如 </p>
+
+<figure><img src="DraggedImage-4.png"/></figure>
+
+<p>这个例子其实并不理想,因为我们应该放到方法中而不是直接在String上添加这种加密返回新字符串对象的方式。 但是确能很清楚的体现了使用一个接口定义的方式只会作用在当前对象上而不会影响扩大到全局对象上.</p>
+
+<figure><img src="DraggedImage-5.png"/></figure>
+
+<hr />
+
+<p>大概就说到这,关于暴露最好的方式其实是模块化 以后再说。</p>
+
+</body>
+</html>
+
