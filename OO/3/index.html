@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<title>安全的创建对象</title>
+	</head>
+<body>
+<h1>安全的创建对象</h1>
+
+<p>前段时间在一次文字游戏的练习中D同学创建了一个方法,但是遇到了一个具有代表性如何更安全的创建对象.</p>
+
+<p><strong>源代码</strong></p>
+
+<figure><img src="DraggedImage.png"/></figure>
+
+<p><strong>运行结果:</strong></p>
+
+<figure><img src="DraggedImage-1.png"/></figure>
+
+<p>他运行出来后 发现并不能这样顺利的拿到自己期望的角色对象。</p>
+
+<p>我观摩了一会 发现原因是因为D同学没有一些强类型语言的基础直接在类定义后去实例化对象的过程中并没有使用<code>new</code>关键字来对类进行一个操作导致的。</p>
+
+<p><strong> 为什么会这样了? player对象其实也是一个方法 为什么必须使用new关键字才能实例化对象了？</strong></p>
+
+<p>首先我们得明白new做了什么 !</p>
+
+<blockquote>
+<p> 接上面的代码来解释 <code>new Player(…)</code></p>
+
+<p>第一步 首先创建了一个空对象 <code>var object = {}</code></p>
+
+<p>第二步 设置空对象的<em>proto</em>属性并指向Player的原型 <code>object.__proto__ = Player.prototype;</code></p>
+
+<p>第三步 将空对象的上文关系绑定到Player上 <code>Player.call(object)  //Player{  name:&quot;&quot; ,role:&quot;&quot;,sex:&quot;&quot; }</code></p>
+
+<p>第四步 最后还做了一次 构造函数中的返回值检测 </p>
+</blockquote>
+
+<h3>关于第四步很有必要好好说说。</h3>
+
+<blockquote>
+<p>首先 举个栗子</p>
+
+<figure><img src="DraggedImage-2.png"/></figure>
+
+<p>我这里定义了一个对象并且返回出一个原始基础对象 数字类型1</p>
+
+<p>但是当我在浏览器打印的时候并没有得到是<strong> :1 </strong></p>
+
+<figure><img src="DraggedImage-3.png"/></figure>
+
+<p>带着这个疑惑我们再进行一次构造函数中return的更改</p>
+
+<figure><img src="DraggedImage-4.png"/></figure>
+
+<p>这个时候控制台却打印出了 我们最早预期的结果</p>
+
+<figure><img src="DraggedImage-5.png"/></figure>
+
+<p>所以最后一次至少我们的<code>new</code>还进行了一次 构造函数的返回值判断</p>
+
+<figure><img src="DraggedImage-6.png"/></figure>
+</blockquote>
+
+<hr />
+
+<p>用一张图解释上面new和没有new关键字进行原型寻找的过程</p>
+
+<figure><img src="DraggedImage-7.png"/></figure>
+
+<p>因为没有使用new的时候查找proto的对象不是基于Player而是基于Function对象的所以属性都不存在则返回undefinde</p>
+
+<blockquote>
+<p> If you forget to include the new prefix when calling a constructor function, then this will not be bound to the new object. Sadly, this will be bound to the global object, so instead of augmenting your new object, you will be clobbering global variables. That is really bad. There is no compile warning, and there is no runtime warning. —Javascript语言精粹</p>
+</blockquote>
+
+<p><br/><strong>道哥也表示尽量不要使用new避免出现这样的问题</strong></p>
+
+<p>其实我们只需要增加一个简单的检查机制就可以避免这个问题。</p>
+
+<figure><img src="DraggedImage-8.png"/></figure>
+
+<p>输出:</p>
+
+<figure><img src="DraggedImage-9.png"/></figure>
+
+<hr />
+
+<h3>打完收工。</h3>
+
+</body>
+</html>
+
